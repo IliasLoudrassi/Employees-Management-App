@@ -9,14 +9,14 @@ import {
 } from "./styled";
 
 interface Props {
-  handleDayInputChange: (id: string) => void;
-  dayInputValue: string | undefined;
+  handleDayInputChange: (id: string, value: string, e?: string) => void;
+  // dayInputValue: string | undefined;
   selectedWeek?: Timesheet;
 }
 
 export default function Body({
   selectedWeek,
-  dayInputValue,
+  // dayInputValue,
   handleDayInputChange,
 }: Props) {
   return (
@@ -27,11 +27,14 @@ export default function Body({
             <>
               <StyledInputAndSalaryContainer>
                 <DayInput
+                  key={index}
                   placeholderValue={day.totalWorkedHours.toString()}
-                  currenyDay={day.dayName}
-                  dayInputValue={dayInputValue}
+                  currentDay={day.dayName}
+                  // dayInputValue={dayInputValue}
                   dayOfWeek={day}
-                  handleDayInputChange={() => handleDayInputChange(day.dayId)}
+                  handleDayInputChange={(id, value) =>
+                    handleDayInputChange(id, value)
+                  }
                 />
                 <StyledSalaryTextContainer>
                   <StyledSalaryText>{`€${day.totalSalary}`}</StyledSalaryText>

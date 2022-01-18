@@ -45,6 +45,7 @@ export const StyledHoursWorkedValue = styled.div`
   font-weight: 600;
   font-size: 14px;
   color: ${styledTheme.colors.Black};
+  white-space: nowrap;
 `;
 
 export const StyledSalaryContainer = styled.div`

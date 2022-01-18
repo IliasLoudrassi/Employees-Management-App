@@ -2,15 +2,18 @@ import React, { useEffect, useState } from "react";
 import { GlobalStyle } from "./styles/GlobalStyles";
 import Main from "./Components/Main/Main";
 import Body from "./Components/Body/Body";
-import { Employee, Timesheet } from "./Types/EmployeeType";
+import { DayOfWeek, Employee, Timesheet } from "./Types/EmployeeType";
 import { generateEmployee } from "./Data/dataGenerator";
 import Total from "./Components/Total/Total";
+import Loading from "./Components/Loading/Loading";
 
 function App() {
   const [listOfEmployees, setListOfEmployees] = useState<Employee[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee>();
   const [selectedWeek, setSelectedWeek] = useState<Timesheet>();
-  const [dayInputValue, setDayInputValue] = useState<string>();
+  const [totalWorkedHours, setTotalWorkedHours] = useState<number>();
+  const [totalSalary, setTotalSalary] = useState<number>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const NUMBER_OF_USERS_TO_GENERATE = 20;
   const NUMBER_OF_WEEKS_TO_GENERATE = 20;
@@ -39,6 +42,10 @@ function App() {
     selectedWeek && calculateTotal(selectedWeek);
   }, [selectedWeek]);
 
+  useEffect(() => {
+    selectedWeek && calculateTotal(selectedWeek);
+  }, [totalWorkedHours]);
+
   const handleNameInputClick = (employeeId: string) => {
     let userFound: Employee | undefined = listOfEmployees.find(
       (employee) => employee.employeeId === employeeId
@@ -50,35 +57,40 @@ function App() {
     let weekFound: Timesheet | undefined = selectedEmployee?.timesheets?.find(
       (week) => week.timesheetId === weekId
     );
-    console.log(weekId);
     setSelectedWeek(weekFound);
   };
 
-  const handleDayInputClick = (dayId: string) => {
-    console.log(dayId);
-    let tempSelectedWeek = selectedWeek;
-    let dayFound = tempSelectedWeek?.listOfDays.find(
-      (day) => day.dayId === dayId
-    );
-    // console.log(dayFound);
-    // {dayFound?.totalWorkedHours }
+  const handleDayInputChange = (dayId, value: string, e) => {
+    setIsLoading(true);
+    let tempSelectedEmployee: Employee | undefined = selectedEmployee && {
+      ...selectedEmployee,
+    };
+    let tempWeek: Timesheet | undefined =
+      tempSelectedEmployee?.timesheets?.find(
+        (week) => week.timesheetId === selectedWeek?.timesheetId
+      );
 
-    // setSelectedWeek(tempSelectedWeek);
+    let tempDay: DayOfWeek | undefined =
+      tempWeek && tempWeek.listOfDays.find((day) => day.dayId === dayId);
+
+    setTimeout(() => {
+      if (tempDay && value) {
+        tempDay.totalWorkedHours = parseInt(value);
+        setTotalWorkedHours(tempDay.totalWorkedHours);
+        setIsLoading(false);
+      }
+    }, 2000);
   };
-
-  // useEffect(() => {
-  //   console.log("useEffect", dayInputValue);
-  // }, [dayInputValue]);
-
-  const [totalWorkedHours, setTotalWorkedHours] = useState<number>();
 
   const calculateTotal = (timesheet: Timesheet) => {
     let totalWorkedHours = 0;
+    let totalSalary = 0;
     timesheet.listOfDays.forEach((element) => {
       totalWorkedHours += element.totalWorkedHours;
+      totalSalary += element.totalSalary;
     });
     setTotalWorkedHours(totalWorkedHours);
-    console.log(totalWorkedHours);
+    setTotalSalary(totalSalary);
   };
 
   return (
@@ -93,14 +105,22 @@ function App() {
             handleNameInputClick={handleNameInputClick}
             handleDateInputClick={handleDateInputClick}
           />
-
-          <Body
-            dayInputValue={dayInputValue}
-            handleDayInputChange={handleDayInputClick}
-            selectedWeek={selectedWeek}
-          />
-          {totalWorkedHours && (
-            <Total totalWorkedHours={totalWorkedHours} totalSalary={9000} />
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <>
+              <Body
+                // dayInputValue={dayInputValue}
+                handleDayInputChange={handleDayInputChange}
+                selectedWeek={selectedWeek}
+              />
+              {totalWorkedHours && totalSalary && (
+                <Total
+                  totalWorkedHours={totalWorkedHours}
+                  totalSalary={totalSalary}
+                />
+              )}
+            </>
           )}
         </>
       )}
