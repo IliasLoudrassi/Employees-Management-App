@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { Timesheet } from "../../Types/EmployeeType";
+import React from "react";
 import {
   StyledFooterContainer,
   StyledHoursWorkedContainer,

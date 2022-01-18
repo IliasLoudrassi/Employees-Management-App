@@ -10,7 +10,7 @@ interface Props {
   selectedWeek?: Timesheet;
 }
 
-export default function Main({
+export default function Header({
   handleNameInputClick,
   selectedEmployee,
   listOfEmployees,

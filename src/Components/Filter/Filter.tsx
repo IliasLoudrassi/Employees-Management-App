@@ -25,7 +25,6 @@ export default function Filter({
             filterName="Employee"
             dropdownData={listOfEmployees}
             selectedEmployee={selectedEmployee}
-            // selectedWeek={selectedWeek}
             handleNameInputClick={(id) => handleNameInputClick(id)}
             isNameDropdown
           />

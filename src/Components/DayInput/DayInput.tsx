@@ -3,9 +3,7 @@ import { DayOfWeek } from "../../Types/EmployeeType";
 import { StyledInputContainer, StyledITextnput } from "./styled";
 
 interface Props {
-  // handleDayInputChange: (id: string, e: string) => void;
-  handleDayInputChange: (id: string, value: string, e?: string) => void;
-  // dayInputValue: string | undefined;
+  handleDayInputChange: (id: string, value: string) => void;
   currentDay: string;
   placeholderValue: string;
   dayOfWeek: DayOfWeek;
@@ -25,7 +23,6 @@ export default function DayInput({
 
   const onChange = (e) => {
     setDayInputValue(e.target.value);
-    // handleDayInputChange(dayOfWeek.dayId, dayInputValue);
   };
 
   const handleKeyDown = (e) => {

@@ -15,24 +15,43 @@ const generateWorkedHours = () => {
   return Math.floor(Math.random() * (14 - 0 + 1));
 };
 
-const calculateDailySalary = (
-  hourlyRate: HourlyRate,
-  totalWorkedHours: number
-) => {
-  let dailySalary = 0;
-  if (totalWorkedHours <= 8) {
-    dailySalary = hourlyRate.standard * 8;
-  }
-  // if (totalWorkedHours > 8) {
-  //   dailySalary += hourlyRate.extra * (totalWorkedHours - 8);
-  // }
-  return dailySalary;
-};
-
 const getFirstDayOfWeek = (date: Date) => {
   const day = date.getDay(),
     diff = date.getDate() - day + (day === 0 ? -6 : 1);
   return new Date(date.setDate(diff));
+};
+
+const getIsWeekend = (date: Date) => {
+  if (date.getDay() === 6 || date.getDay() === 0) {
+    return true;
+  }
+  return false;
+};
+
+export const calculateDailySalary = (
+  hourlyRate: HourlyRate,
+  totalWorkedHours: number,
+  date: Date
+): number => {
+  let dailySalary = 0;
+  if (getIsWeekend(date)) {
+    dailySalary = hourlyRate.extra * totalWorkedHours;
+  } else {
+    if (totalWorkedHours <= 8 && totalWorkedHours > 0) {
+      if (totalWorkedHours === 8) {
+        dailySalary = hourlyRate.standard * 8;
+      }
+      if (totalWorkedHours < 8) {
+        dailySalary = hourlyRate.standard * (8 - (8 - totalWorkedHours));
+      }
+    }
+
+    if (totalWorkedHours > 8) {
+      dailySalary =
+        hourlyRate.standard * 8 + hourlyRate.extra * (totalWorkedHours - 8);
+    }
+  }
+  return dailySalary;
 };
 
 const generateTimesheets = (
@@ -51,7 +70,11 @@ const generateTimesheets = (
         dayName: dateTemp.toLocaleString("en-us", { weekday: "long" }),
         totalWorkedHours: totalWorkedHours,
         extraHours: totalWorkedHours > 8 ? totalWorkedHours - 8 : 0,
-        totalSalary: calculateDailySalary(hourlyRate, totalWorkedHours),
+        totalSalary: calculateDailySalary(
+          hourlyRate,
+          totalWorkedHours,
+          dateTemp
+        ),
         date: dateTemp,
       };
       daysOfWeek = [...daysOfWeek, dayOfWeek];
@@ -80,6 +103,6 @@ export const generateEmployee = (numberOfWeeks: number): Employee => {
     hourlyRate: hourlyRate,
     timesheets: generateTimesheets(numberOfWeeks, hourlyRate),
   };
-  // console.log(employee);
+
   return employee;
 };

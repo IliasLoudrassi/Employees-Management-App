@@ -10,15 +10,10 @@ import {
 
 interface Props {
   handleDayInputChange: (id: string, value: string, e?: string) => void;
-  // dayInputValue: string | undefined;
   selectedWeek?: Timesheet;
 }
 
-export default function Body({
-  selectedWeek,
-  // dayInputValue,
-  handleDayInputChange,
-}: Props) {
+export default function Body({ selectedWeek, handleDayInputChange }: Props) {
   return (
     <div>
       <StyledBodyContainer>
@@ -27,10 +22,9 @@ export default function Body({
             <>
               <StyledInputAndSalaryContainer>
                 <DayInput
-                  key={index}
+                  key={day.dayId}
                   placeholderValue={day.totalWorkedHours.toString()}
                   currentDay={day.dayName}
-                  // dayInputValue={dayInputValue}
                   dayOfWeek={day}
                   handleDayInputChange={(id, value) =>
                     handleDayInputChange(id, value)

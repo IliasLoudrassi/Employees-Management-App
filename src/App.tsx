@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { GlobalStyle } from "./styles/GlobalStyles";
-import Main from "./Components/Main/Main";
 import Body from "./Components/Body/Body";
 import { DayOfWeek, Employee, Timesheet } from "./Types/EmployeeType";
-import { generateEmployee } from "./Data/dataGenerator";
+import { calculateDailySalary, generateEmployee } from "./Data/dataGenerator";
 import Total from "./Components/Total/Total";
 import Loading from "./Components/Loading/Loading";
+import Header from "./Components/Header/Header";
 
 function App() {
   const [listOfEmployees, setListOfEmployees] = useState<Employee[]>([]);
@@ -44,7 +44,7 @@ function App() {
 
   useEffect(() => {
     selectedWeek && calculateTotal(selectedWeek);
-  }, [totalWorkedHours]);
+  }, [totalWorkedHours, selectedWeek]);
 
   const handleNameInputClick = (employeeId: string) => {
     let userFound: Employee | undefined = listOfEmployees.find(
@@ -76,6 +76,13 @@ function App() {
     setTimeout(() => {
       if (tempDay && value) {
         tempDay.totalWorkedHours = parseInt(value);
+        if (selectedEmployee) {
+          tempDay.totalSalary = calculateDailySalary(
+            selectedEmployee.hourlyRate,
+            tempDay.totalWorkedHours,
+            tempDay.date
+          );
+        }
         setTotalWorkedHours(tempDay.totalWorkedHours);
         setIsLoading(false);
       }
@@ -98,7 +105,7 @@ function App() {
       <GlobalStyle />
       {selectedEmployee && (
         <>
-          <Main
+          <Header
             listOfEmployees={listOfEmployees}
             selectedEmployee={selectedEmployee}
             selectedWeek={selectedWeek}
